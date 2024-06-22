@@ -28,14 +28,33 @@ nano config/mosquitto.conf
 
 Basic configuration file content below including websocket config
 ```
-allow_anonymous false
-listener 1883
-listener 9001
-protocol websockets
 persistence true
-password_file /mosquitto/config/pwfile
-persistence_file mosquitto.db
 persistence_location /mosquitto/data/
+log_type subscribe
+log_type unsubscribe
+log_type websockets
+log_type error
+log_type warning
+log_type notice
+log_type information
+log_dest file /mosquitto/log/mosquitto.log
+log_dest stdout
+
+password_file /mosquitto/passwd_file
+allow_anonymous false
+
+# MQTT Default listener
+listener 1883 0.0.0.0
+
+# MQTT over WebSockets
+listener 9001 0.0.0.0
+protocol websockets
+
+# MQTT over TLS
+listener 8883 0.0.0.0
+cafile /mosquitto/cert/ca.crt
+certfile /mosquitto/cert/mosquitto.crt
+keyfile /mosquitto/cert/mosquitto.key
 ```
 
 ## 4. Create Mosquitto password file - pwfile
@@ -58,9 +77,10 @@ services:
       - "1883:1883" #default mqtt port
       - "9001:9001" #default mqtt port for websockets
     volumes:
-      - ./config:/mosquitto/config:rw
-      - ./data:/mosquitto/data:rw
-      - ./log:/mosquitto/log:rw
+      - config:/mosquitto/config:rw
+      - data:/mosquitto/data:rw
+      - log:/mosquitto/log:rw
+      - cert:/mosquitto/cert:rw
     restart: unless-stopped
 
 # volumes for mapping data,config and log
