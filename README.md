@@ -30,6 +30,8 @@ Basic configuration file content below including websocket config
 ```
 persistence true
 persistence_location /mosquitto/data/
+connection_messages true
+log_timestamp true
 log_type subscribe
 log_type unsubscribe
 log_type websockets
@@ -39,7 +41,6 @@ log_type notice
 log_type information
 log_dest file /mosquitto/log/mosquitto.log
 log_dest stdout
-
 password_file /mosquitto/passwd_file
 allow_anonymous false
 
@@ -69,7 +70,7 @@ touch config/pwfile
 services:
   mosquitto::
     image: eclipse-mosquitto
-    container_name: mqtt5
+    container_name: mosquitto
     ports:
       - 1883:1883 #default mqtt port
       - 9001:9001 #default mqtt port for websockets
