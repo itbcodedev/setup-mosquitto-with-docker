@@ -66,33 +66,27 @@ touch config/pwfile
 ## 5. Create docker-compose file called 'docker-compose.yml'
 
 ```yml
-
-version: "3.7"
 services:
-  # mqtt5 eclipse-mosquitto
-  mqtt5:
+  mosquitto::
     image: eclipse-mosquitto
     container_name: mqtt5
     ports:
-      - "1883:1883" #default mqtt port
-      - "9001:9001" #default mqtt port for websockets
+      - 1883:1883 #default mqtt port
+      - 9001:9001 #default mqtt port for websockets
+      - 8883:8883 #default mqtt tls port
     volumes:
-      - config:/mosquitto/config:rw
-      - data:/mosquitto/data:rw
-      - log:/mosquitto/log:rw
-      - cert:/mosquitto/cert:rw
+      - ./config:/mosquitto/config:rw
+      - ./data:/mosquitto/data:rw
+      - ./log:/mosquitto/log:rw
+      - ./cert:/mosquitto/cert:rw
     restart: unless-stopped
-
-# volumes for mapping data,config and log
-volumes:
-  config:
-  data:
-  log:
+    networks:
+      - mosquitto
 
 networks:
-  default:
-    name: mqtt5-network
-
+    mosquitto:
+        name: mosquitto
+        driver: bridge
 ```
 ### 5.1 Public facing Mosquitto Websocket Server with Free SSL using Caddy Server
 
